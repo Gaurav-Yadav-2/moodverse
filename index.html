@@ -812,11 +812,6 @@ dialog.closing .sheet-body { animation: sheetDown .24s ease forwards; }
       </div>
     </div>
     <div class="set-group">
-      <h3>Preview</h3>
-      <button class="btn btn-primary" type="button" id="demo-btn">✨ Load demo data <span class="arrow-sq" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></button>
-      <p class="set-note">Fills last month and this month (up to yesterday) with sample entries. Your own entries are kept.</p>
-    </div>
-    <div class="set-group">
       <h3>Your data</h3>
       <div class="set-row">
         <button class="btn btn-line" type="button" id="export-btn">Back up (export)</button>
@@ -1880,7 +1875,7 @@ function togglePeek(open) {
 function renderStrip() {
   const keys = Object.keys(Store.all()).sort().reverse().slice(0, 10);
   const strip = $('#strip');
-  if (!keys.length) { strip.innerHTML = `<div class="strip-empty glass">Your logged days will drift by here. Try <button type="button" class="chip" data-action="demo" style="margin-left:6px">✨ demo data</button></div>`; return; }
+  if (!keys.length) { strip.innerHTML = `<div class="strip-empty glass">Your logged days will drift by here once you start journaling ✨</div>`; return; }
   const item = (k, dup) => {
     const e = Store.get(k), d = dateOf(k);
     return `<button type="button" class="strip-item pressable" data-key="${k}" ${dup ? 'tabindex="-1" aria-hidden="true"' : ''} aria-label="${fmtLong(d)}: ${MOODS[e.mood].label}. ${escapeHTML(e.note || 'No note')}">
@@ -2039,7 +2034,7 @@ function renderChart(list, { animate }) {
   const Y = v => pt + (5 - v) / 4 * (H - pt - pb);
   chartIdx = -1; chartW = W;
   if (!list.length) {
-    wrap.innerHTML = `<div class="chart-empty"><p>No entries for ${MONTHS[m]} yet.</p><button type="button" class="btn btn-line" data-action="demo">✨ Load demo data</button></div>`;
+    wrap.innerHTML = `<div class="chart-empty"><p>No entries for ${MONTHS[m]} yet.</p><button type="button" class="btn btn-line" data-action="go-today">Log today ${arrowSq}</button></div>`;
     chartPoints = []; return;
   }
   chartPoints = list.map(e => ({ ...e, x: X(e.d), y: Y(e.mood) }));
@@ -2221,32 +2216,34 @@ function updateSceneActivity() {
 }
 
 /* =====================================================================
-   DEMO DATA, IMPORT / EXPORT
+   OLD SAMPLE-ENTRY CLEANUP, IMPORT / EXPORT
    ===================================================================== */
-const DEMO_NOTES = {
+/* Earlier versions had a "Load demo data" button. These were its sample notes.
+   On first launch of this version, any saved entry whose mood AND note exactly
+   match one of them is removed (once, with Undo), so only real entries remain. */
+const OLD_SAMPLE_NOTES = {
   5: ['Nailed the presentation and celebrated with tacos 🌮', 'Sunny hike with friends — tired legs, full heart', 'Got great news today and I am still smiling', 'Perfect lazy Sunday with a good book', 'Finished the project a day early!', 'Dinner with family, laughed until it hurt'],
   4: ['Productive morning, calm evening walk', 'Tried a new recipe and it actually worked', 'Long chat with an old friend', 'Gym felt good, slept well', 'Small wins all day long', 'Great coffee and even better weather'],
   3: ['Pretty average day, nothing special', 'Busy but manageable', 'Rainy day, stayed in and caught up on chores', 'Meetings, emails, repeat', 'Okay day — a little tired', 'Quiet day at home'],
   2: ['Felt drained after work', "Didn't sleep well, dragged all day", 'Missed the bus and the mood followed', 'A bit lonely this evening', 'Too many deadlines piling up'],
   1: ["Rough day. Glad it's over.", 'Headache and bad news — not my day', 'Argued with someone I care about', 'Everything that could go wrong did'],
 };
-function loadDemo() {
-  const today = dateOf(todayKey());
-  const start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-  const rnd = mulberry32(today.getFullYear() * 100 + today.getMonth());
-  const data = {};
-  for (let d = new Date(start); d < today; d = addDays(d, 1)) {
-    if (rnd() < .1) continue;                              // a few gaps feel realistic
-    const wd = monIdx(d);
-    const base = 3.1 + (wd >= 5 ? .95 : 0) + Math.sin(d.getDate() / 4.2) * .7 + (rnd() - .5) * 1.7;
-    const mood = clamp(Math.round(base), 1, 5);
-    const notes = DEMO_NOTES[mood];
-    data[keyOf(d)] = { mood, note: notes[Math.floor(rnd() * notes.length)] };
+const CLEANUP_KEY = 'moodverse.sampleCleanupDone';
+function removeOldSampleEntries() {
+  if (Store.pref.get(CLEANUP_KEY)) return;
+  const removed = {};
+  for (const [k, e] of Object.entries(Store.all())) {
+    if ((OLD_SAMPLE_NOTES[e.mood] || []).includes(e.note)) removed[k] = e;
   }
-  const n = Store.merge(data, false);
-  closeSheet($('#settings-sheet'));
+  Object.keys(removed).forEach(k => Store.remove(k));
+  Store.pref.set(CLEANUP_KEY, '1');
+  const n = Object.keys(removed).length;
+  if (!n) return;
   refreshAll({ animateMonth: true });
-  toast(n ? `Loaded ${n} demo entries ✨` : 'Demo data is already loaded');
+  toast(`Removed ${n} sample entr${n === 1 ? 'y' : 'ies'}`, {
+    action: 'Undo', duration: 9000,
+    onAction: () => { Store.merge(removed); refreshAll(); toast('Sample entries restored'); },
+  });
 }
 /** Back up all entries as a .json file. On phones this opens the share sheet
  *  (save to Files / Drive / send to yourself); elsewhere it downloads the file. */
@@ -2369,7 +2366,6 @@ function bindUI() {
   $$('.js-settings').forEach(b => b.addEventListener('click', () => { renderSettingsStatus(); openSheet($('#settings-sheet')); }));
   $$('.js-install').forEach(b => b.addEventListener('click', () => Pwa.install()));
   $$('#theme-seg button').forEach(b => b.addEventListener('click', () => setThemePref(b.dataset.pref)));
-  $('#demo-btn').addEventListener('click', loadDemo);
   $('#export-btn').addEventListener('click', exportJSON);
   $('#import-btn').addEventListener('click', () => $('#import-file').click());
   $('#import-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) importJSON(f); e.target.value = ''; closeSheet($('#settings-sheet')); });
@@ -2433,7 +2429,6 @@ function bindUI() {
 
   /* marquee */
   $('#strip').addEventListener('click', e => {
-    if (e.target.closest('[data-action="demo"]')) { loadDemo(); return; }
     const it = e.target.closest('.strip-item'); if (!it) return;
     const d = dateOf(it.dataset.key);
     state.view = { y: d.getFullYear(), m: d.getMonth() }; state.selectedKey = it.dataset.key;
@@ -2503,7 +2498,7 @@ function bindUI() {
     if (e.key === 'Escape') showTip(-1);
   });
   cw.addEventListener('blur', () => showTip(-1));
-  document.addEventListener('click', e => { if (e.target.closest('[data-action="demo"]') && !e.target.closest('#strip')) loadDemo(); });
+  document.addEventListener('click', e => { if (e.target.closest('[data-action="go-today"]')) { goToday(); setTab('today'); } });
 
   /* gestures: swipe between tabs (mobile) + pull-down for yesterday */
   bindTouchGestures();
@@ -2607,6 +2602,7 @@ function init() {
   window.addEventListener('load', moveIndicator);
 
   booted = true;
+  removeOldSampleEntries();
   Pwa.register();
   Pwa.render();
   if (Pwa.isStandalone()) Pwa.persist();

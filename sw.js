@@ -6,7 +6,7 @@
  *
  * Bump VERSION whenever you upload a new index.html so phones pick it up.
  */
-const VERSION = 'moodverse-v2';
+const VERSION = 'moodverse-v3';
 
 // Files that make up the app. Paths are relative so it works in a sub-folder
 // (e.g. https://you.github.io/moodverse/).
