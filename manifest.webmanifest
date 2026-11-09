@@ -1,0 +1,18 @@
+{
+  "name": "Moodverse — one line, one mood",
+  "short_name": "Moodverse",
+  "description": "A tiny daily mood journal: one line and one emoji a day, shown as a living 3D month.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f8f6fd",
+  "theme_color": "#f8f6fd",
+  "categories": ["health", "lifestyle", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
