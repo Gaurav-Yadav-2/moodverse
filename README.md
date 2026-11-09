@@ -15,6 +15,32 @@ One line, one mood, every day — shown as a living 3D month.
 
 Keep these together — upload the whole folder.
 
+## Voice journal
+
+Tap the big 🎙 on the Today screen and talk about your day — your words appear as text you
+can edit before saving. You can also say (or type) **What helped today?** The first sentence
+of your journal fills the one-line summary automatically.
+
+On a Low or Bad day, Moodverse shows **"Things that helped you before"**, collected from your
+own past entries; Trends shows **"What helps you most"**. This all runs on the phone — no AI
+service is involved yet.
+
+Voice uses the browser's built-in speech recognition (Chrome on Android, Safari on iPhone,
+Chrome/Edge on desktop). The audio is turned into text by that speech service (Google on
+Android/Chrome, Apple on iPhone); the saved journal stays on your device. In browsers without
+voice support (e.g. Firefox), use the 🎤 on your phone's keyboard instead.
+
+Each saved day looks like this (in exports too, ready for future AI features):
+
+```json
+"2026-11-09": {
+  "mood": 2,
+  "note": "Long day, felt drained after work.",
+  "journal": "Long day, felt drained after work. The meeting ran late and …",
+  "helped": "a walk, called mom"
+}
+```
+
 ## Where your data is saved
 
 - Entries are saved **only on the device you use**, inside the browser's own storage

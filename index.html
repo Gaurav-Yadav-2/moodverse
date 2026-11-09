@@ -376,6 +376,80 @@ main { outline: none; min-width: 0; }
 .counter { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 700; color: var(--faint); font-variant-numeric: tabular-nums; }
 .counter.near { color: #FFD166; } .counter.full { color: #EF476F; }
 .form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* voice journal */
+.voice-block { display: grid; gap: 4px; }
+.voice-row { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
+.mic-btn {
+  position: relative; flex: none; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--mood); color: var(--ink-on-mood);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--mood) 45%, transparent), inset 0 1px 0 rgba(255,255,255,.5);
+  transition: transform .25s var(--spring), background .3s, color .3s;
+}
+.mic-btn svg { width: 28px; height: 28px; }
+.mic-btn:active { transform: scale(.9); }
+.mic-btn.rec, .mic-mini.rec { background: #EF476F; color: #fff; }
+.mic-btn.rec::before, .mic-btn.rec::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid #EF476F;
+  animation: micPulse 1.6s ease-out infinite; pointer-events: none;
+}
+.mic-btn.rec::after { animation-delay: .8s; }
+@keyframes micPulse { from { transform: scale(1); opacity: .75; } to { transform: scale(1.9); opacity: 0; } }
+.mic-title { font-weight: 800; font-size: 16px; }
+.mic-title.live { color: #EF476F; }
+.mic-sub { font-size: 13px; color: var(--muted); }
+.field-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.field-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.field-label .opt { font-weight: 600; color: var(--faint); margin-left: 4px; }
+.counter-inline { font-size: 12px; font-weight: 700; color: var(--faint); font-variant-numeric: tabular-nums; }
+.journal-input {
+  width: 100%; min-height: 104px; max-height: 300px; resize: vertical; padding: 14px 16px; border-radius: 18px;
+  background: var(--glass-strong); border: 1px solid var(--glass-border); color: var(--text);
+  font: inherit; font-size: 16px; line-height: 1.55; outline: none; transition: border-color .3s, box-shadow .3s;
+}
+.journal-input::placeholder { color: var(--faint); }
+.journal-input:focus { border-color: var(--mood); box-shadow: 0 0 0 4px color-mix(in srgb, var(--mood) 25%, transparent); }
+.journal-input.listening, .note-input.listening { border-color: #EF476F; box-shadow: 0 0 0 4px rgba(239, 71, 111, .18); }
+.note-input.plain { padding-right: 18px; }
+.mic-mini {
+  width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; flex: none;
+  border: 1px solid var(--glass-border); background: var(--glass); transition: transform .25s var(--spring), background .2s;
+}
+.mic-mini svg { width: 20px; height: 20px; }
+.mic-mini:active { transform: scale(.9); }
+.mic-mini.rec { animation: miniPulse 1.2s ease-in-out infinite; border-color: transparent; }
+@keyframes miniPulse { 50% { box-shadow: 0 0 0 8px rgba(239, 71, 111, .18); } }
+.voice-privacy { line-height: 1.45; }
+
+/* saved journal + what helped */
+.helped-chip {
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; border-radius: 14px; font-size: 14px;
+  background: color-mix(in srgb, #06D6A0 14%, transparent); border: 1px solid color-mix(in srgb, #06D6A0 30%, transparent);
+}
+.journal-view { border-top: 1px solid var(--glass-border); padding-top: 4px; }
+.journal-view summary {
+  cursor: pointer; list-style: none; min-height: 44px; display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700; color: var(--muted);
+}
+.journal-view summary::-webkit-details-marker { display: none; }
+.journal-view summary::after { content: "▾"; margin-left: auto; transition: transform .3s var(--spring); }
+.journal-view[open] summary::after { transform: rotate(180deg); }
+.journal-view p { white-space: pre-wrap; font-size: 15px; line-height: 1.65; padding-bottom: 6px; }
+
+/* "things that helped you before" */
+.helpers { padding: 16px 18px; display: grid; gap: 10px; animation: cardIn .5s var(--ease-out); }
+.helpers h3 { font-size: 16px; font-weight: 800; }
+.helper-list { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.helper-list li {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; font-size: 14px; font-weight: 600;
+  background: color-mix(in srgb, #06D6A0 16%, var(--glass)); border: 1px solid color-mix(in srgb, #06D6A0 32%, transparent);
+}
+.helper-list li small { color: var(--muted); font-weight: 700; }
+.helps-top { padding: 18px; display: grid; gap: 12px; }
+.helps-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.helps-rows li { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; font-size: 14px; font-weight: 600; }
+.helps-rows .bar { grid-column: 1 / -1; height: 6px; border-radius: 4px; background: var(--glass-strong); overflow: hidden; }
+.helps-rows .bar i { display: block; height: 100%; border-radius: 4px; background: #06D6A0; }
 .form-actions .btn-primary { flex: 1; }
 
 .entry-card { overflow: hidden; outline-offset: 4px; }
@@ -397,6 +471,7 @@ main { outline: none; min-width: 0; }
 .strip { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .strip-track { display: flex; gap: 12px; width: max-content; animation: marquee var(--dur, 40s) linear infinite; padding: 6px 12px 6px 0; }
 .strip:hover .strip-track, .strip:focus-within .strip-track { animation-play-state: paused; }
+.strip-track.still { animation: none; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 .strip-item {
   width: 210px; min-height: 92px; border-radius: 20px; overflow: hidden; text-align: left; position: relative;
@@ -632,6 +707,8 @@ dialog.closing .sheet-body { animation: sheetDown .24s ease forwards; }
     <symbol id="i-minus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></symbol>
     <symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
     <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="3"/></symbol>
     <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
   </defs>
 </svg>
@@ -692,8 +769,30 @@ dialog.closing .sheet-body { animation: sheetDown .24s ease forwards; }
 
         <div class="today-body stagger" style="--i:2">
           <div class="mood-picker" id="mood-picker" role="radiogroup" aria-label="Pick your mood"></div>
+          <section class="helpers glass" id="helpers-card" aria-live="polite" hidden></section>
           <form class="entry-form glass" id="entry-form" novalidate>
-            <label class="sr-only" for="note-input">One line about your day (up to 120 characters)</label>
+            <!-- Voice journal: speak about the day; speech becomes editable text -->
+            <div class="voice-block">
+              <div class="voice-row">
+                <button type="button" class="mic-btn" id="mic-journal" data-target="journal-input" data-title="mic-title" aria-pressed="false" aria-label="Start voice journal">
+                  <svg aria-hidden="true"><use href="#i-mic"/></svg>
+                </button>
+                <div class="mic-meta">
+                  <p class="mic-title" id="mic-title">Tap and talk about your day</p>
+                  <p class="mic-sub">Your words become text — fix anything before saving.</p>
+                </div>
+              </div>
+              <div class="field-head"><label class="field-label" for="journal-input">Your day, in your words</label><span class="counter-inline" id="journal-counter" aria-hidden="true">0/2000</span></div>
+              <textarea id="journal-input" class="journal-input" maxlength="2000" rows="3" placeholder="Tap the mic and talk… or type here."></textarea>
+            </div>
+            <div>
+              <div class="field-head">
+                <label class="field-label" for="helped-input">🌱 What helped today? <span class="opt">optional</span></label>
+                <button type="button" class="mic-mini" id="mic-helped" data-target="helped-input" aria-pressed="false" aria-label="Speak what helped today"><svg aria-hidden="true"><use href="#i-mic"/></svg></button>
+              </div>
+              <input id="helped-input" class="note-input plain" type="text" maxlength="300" placeholder="A walk, music, talking to a friend…" autocomplete="off" enterkeyhint="next">
+            </div>
+            <div class="field-head" style="margin-bottom:-4px"><label class="field-label" for="note-input">One-line summary <span class="opt">auto-filled from your journal</span></label></div>
             <div class="input-wrap">
               <input id="note-input" class="note-input" type="text" maxlength="120" placeholder="Sum up today in one line…" autocomplete="off" enterkeyhint="done">
               <span class="counter" id="note-counter" aria-hidden="true">0/120</span>
@@ -702,6 +801,7 @@ dialog.closing .sheet-body { animation: sheetDown .24s ease forwards; }
               <button type="button" class="btn btn-line" id="cancel-edit" hidden>Cancel</button>
               <button type="submit" class="btn btn-primary" id="save-btn"><span id="save-label">Save today</span><span class="arrow-sq" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></button>
             </div>
+            <p class="tiny muted voice-privacy">🎙 Speech is turned into text by your browser's speech service (Google on Android, Apple on iPhone). Your journal itself is saved only on this device.</p>
           </form>
           <article class="entry-card glass pressable" id="entry-card" tabindex="0" hidden></article>
         </div>
@@ -771,6 +871,7 @@ dialog.closing .sheet-body { animation: sheetDown .24s ease forwards; }
           </div>
           <div class="stats" id="stats"></div>
           <div class="dist-card glass reveal" id="dist"></div>
+          <section class="helps-top glass reveal" id="helps-top" aria-labelledby="helps-title"></section>
         </section>
       </div>
     </section>
@@ -849,7 +950,9 @@ const MOOD_ORDER = [1, 2, 3, 4, 5];               // left → right in the picke
 const STORAGE_KEY = 'moodverse.entries.v1';
 const THEME_KEY = 'moodverse.theme.v2';   // v2: light became the default
 const MODE_KEY = 'moodverse.monthMode';
-const MAX_NOTE = 120;
+const MAX_NOTE = 120;        // one-line summary
+const MAX_JOURNAL = 2000;    // voice / typed journal for the day
+const MAX_HELPED = 300;      // "What helped today?"
 const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const TABS = ['today', 'month', 'trends'];
@@ -892,15 +995,26 @@ const Store = (() => {
   const safeGet = k => { try { return localStorage.getItem(k); } catch (e) { persistent = false; return null; } };
   const safeSet = (k, v) => { try { localStorage.setItem(k, v); return true; } catch (e) { persistent = false; return false; } };
 
-  /** Keep only well-formed { "YYYY-MM-DD": { mood: 1-5, note } } entries. */
+  /** One clean entry: { mood: 1-5, note: ≤120, journal?: ≤2000, helped?: ≤300 }.
+   *  journal = the spoken/typed account of the day; helped = what lifted the mood.
+   *  Both are optional so older entries (mood + note only) stay valid. */
+  function clean(v) {
+    const mood = Number(v.mood);
+    if (!Number.isInteger(mood) || mood < 1 || mood > 5) return null;
+    const str = (x, max) => String(x == null ? '' : x).trim().slice(0, max);
+    const e = { mood, note: str(v.note, MAX_NOTE) };
+    const journal = str(v.journal, MAX_JOURNAL), helped = str(v.helped, MAX_HELPED);
+    if (journal) e.journal = journal;
+    if (helped) e.helped = helped;
+    return e;
+  }
+  /** Keep only well-formed { "YYYY-MM-DD": entry } pairs. */
   function sanitize(obj) {
     const out = {};
     if (!obj || typeof obj !== 'object') return out;
     for (const [k, v] of Object.entries(obj)) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !v || typeof v !== 'object') continue;
-      const mood = Number(v.mood);
-      if (!Number.isInteger(mood) || mood < 1 || mood > 5) continue;
-      out[k] = { mood, note: String(v.note == null ? '' : v.note).slice(0, MAX_NOTE) };
+      const e = clean(v); if (e) out[k] = e;
     }
     return out;
   }
@@ -915,7 +1029,7 @@ const Store = (() => {
     load, sanitize,
     all: () => memory,
     get: k => memory[k],
-    set(k, e) { memory[k] = { mood: e.mood, note: String(e.note || '').slice(0, MAX_NOTE) }; persist(); },
+    set(k, e) { const c = clean(e); if (c) { memory[k] = c; persist(); } },
     remove(k) { delete memory[k]; persist(); },
     merge(obj, overwrite = true) {
       const clean = sanitize(obj); let n = 0;
@@ -1125,7 +1239,7 @@ const Loop = (() => {
 })();
 let lastTodayKey = todayKey();
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { Loop.stop(); return; }
+  if (document.hidden) { Loop.stop(); Voice.stop(); return; }
   Loop.start();
   if (todayKey() !== lastTodayKey) {            // midnight passed while the tab was hidden
     if (state.editKey === lastTodayKey && !state.editing) state.editKey = todayKey();
@@ -1739,6 +1853,168 @@ const orbFallback = {
 };
 const orbView = () => orb3d || orbFallback;
 
+/* =====================================================================
+   VOICE JOURNAL — speech-to-text with the browser's Web Speech API.
+   Listens until the user taps stop; recognition restarts after each pause
+   (continuous mode repeats words on Android Chrome, so we chain short
+   sessions instead). Where unsupported (e.g. Firefox), we fall back to
+   the phone keyboard's own dictation mic.
+   ===================================================================== */
+const Voice = (() => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const MAX_MS = 5 * 60 * 1000;                  // safety stop after 5 minutes
+  let rec = null, active = null;
+  const ERRORS = {
+    'not-allowed': 'Microphone is blocked. Allow it for this site in your browser settings.',
+    'service-not-allowed': "Voice typing isn't allowed here. Use the mic on your keyboard instead.",
+    'audio-capture': 'No microphone was found.',
+    'network': 'Voice typing needs an internet connection. You can still type.',
+    'language-not-supported': "Voice typing doesn't support your phone's language yet.",
+  };
+  const join = (a, b) => !a ? b : !b ? a : a + (/\s$/.test(a) ? '' : ' ') + b;
+  /** Capitalise the start of a new sentence. */
+  const tidy = (prev, text) => {
+    text = text.trim(); if (!text) return '';
+    return !prev || /[.!?]\s*$/.test(prev) ? text[0].toUpperCase() + text.slice(1) : text;
+  };
+  const fmt = ms => `${Math.floor(ms / 60000)}:${pad(Math.floor(ms / 1000) % 60)}`;
+
+  function paint(interim = '') {
+    const a = active; if (!a) return;
+    const max = a.el.maxLength > 0 ? a.el.maxLength : MAX_JOURNAL;
+    a.el.value = join(join(a.base, a.said), interim).slice(0, max);
+    a.el.dispatchEvent(new Event('input', { bubbles: true }));
+    if (a.el.tagName === 'TEXTAREA') a.el.scrollTop = a.el.scrollHeight;
+  }
+  function status() {
+    const a = active; if (!a || !a.title) return;
+    a.title.textContent = `Listening… ${fmt(Date.now() - a.started)} · tap to stop`;
+  }
+  function listen() {
+    const a = active; if (!a) return;
+    rec = new SR();
+    rec.lang = navigator.language || 'en-US';
+    rec.continuous = false; rec.interimResults = true; rec.maxAlternatives = 1;
+    const sessionStart = Date.now();
+    rec.onresult = e => {
+      if (active !== a) return;
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i], t = r[0].transcript;
+        if (r.isFinal) a.said = join(a.said, tidy(join(a.base, a.said), t)); else interim += t;
+      }
+      paint(interim.trim());
+    };
+    rec.onerror = e => {
+      if (active !== a || e.error === 'no-speech' || e.error === 'aborted') return;
+      toast(ERRORS[e.error] || 'Voice typing stopped. Please try again.');
+      stop();
+    };
+    rec.onend = () => {
+      if (active !== a) return;
+      paint();
+      // guard against a tight restart loop if the service keeps ending instantly
+      a.quick = Date.now() - sessionStart < 400 ? a.quick + 1 : 0;
+      if (a.quick > 4 || Date.now() - a.started > MAX_MS) { stop(); return; }
+      try { listen(); } catch (err) { stop(); }
+    };
+    try { rec.start(); } catch (err) { stop(); }
+  }
+  /** Start (or, if already listening into this field, stop) voice input. */
+  function toggle(el, btn) {
+    if (active) { const same = active.el === el; stop(); if (same) return; }
+    if (!SR) {
+      toast("Voice typing isn't built into this browser — tap the 🎤 on your keyboard instead.");
+      el.focus(); return;
+    }
+    active = { el, btn, title: btn.dataset.title ? $('#' + btn.dataset.title) : null, base: el.value.trim(), said: '', started: Date.now(), quick: 0 };
+    btn.classList.add('rec'); btn.setAttribute('aria-pressed', 'true'); btn.setAttribute('aria-label', 'Stop voice input');
+    $('use', btn).setAttribute('href', '#i-stop');
+    el.classList.add('listening');
+    if (active.title) active.title.classList.add('live');
+    active.tick = setInterval(status, 500); status();
+    buzz(12);
+    listen();
+  }
+  function stop() {
+    const a = active; if (!a) return;
+    active = null;
+    try { rec && rec.abort(); } catch (e) { /* already stopped */ }
+    clearInterval(a.tick);
+    a.btn.classList.remove('rec'); a.btn.setAttribute('aria-pressed', 'false');
+    a.btn.setAttribute('aria-label', a.btn.id === 'mic-journal' ? 'Start voice journal' : 'Speak what helped today');
+    $('use', a.btn).setAttribute('href', '#i-mic');
+    a.el.classList.remove('listening');
+    a.el.value = a.el.value.trim(); a.el.dispatchEvent(new Event('input', { bubbles: true }));
+    if (a.title) { a.title.classList.remove('live'); a.title.textContent = a.el.value ? 'Tap to keep talking' : 'Tap and talk about your day'; }
+    buzz(8);
+  }
+  return { toggle, stop, supported: !!SR, get listening() { return !!active; } };
+})();
+
+/** First sentence of the journal, clipped to fit the one-line summary. */
+function summarize(text) {
+  const t = String(text || '').replace(/\s+/g, ' ').trim(); if (!t) return '';
+  const first = t.match(/^.*?[.!?](?=\s|$)/);          // no look-behind: works on older iPhones too
+  let s = first ? first[0] : t;
+  if (s.length > MAX_NOTE) { s = s.slice(0, MAX_NOTE - 1); s = s.slice(0, Math.max(s.lastIndexOf(' '), 60)).replace(/[,;:\s]+$/, '') + '…'; }
+  return s[0].toUpperCase() + s.slice(1);
+}
+let noteTouched = false;     // once the user edits the summary, stop auto-filling it
+
+/* ---------- "what helped" — learned from the user's own entries ---------- */
+/** Split "a walk and music, called mom" into items and rank them:
+ *  items from good days (mood ≥ 4) count double, recent ones break ties. */
+function helperItems() {
+  const map = new Map();
+  for (const [key, e] of Object.entries(Store.all())) {
+    if (!e.helped) continue;
+    const parts = e.helped.split(/[,;\n+&]|\band\b|\bthen\b/i)
+      .map(s => s.trim().replace(/^(a|an|the|i|we)\s+/i, '').replace(/[.!?]+$/, '').trim())
+      .filter(s => s.length > 1 && s.length <= 60);
+    for (const p of parts) {
+      const id = p.toLowerCase();
+      const it = map.get(id) || { label: p[0].toUpperCase() + p.slice(1), n: 0, score: 0, last: '' };
+      it.n++; it.score += e.mood >= 4 ? 2 : 1; if (key > it.last) it.last = key;
+      map.set(id, it);
+    }
+  }
+  return [...map.values()].sort((a, b) => b.score - a.score || b.last.localeCompare(a.last));
+}
+/** On Low/Bad days, gently surface what helped before. */
+function renderHelpers() {
+  const card = $('#helpers-card');
+  const e = Store.get(state.editKey), mood = formOpen() ? state.draftMood : e && e.mood;
+  if (!mood || mood > 2 || state.editKey !== todayKey() && !formOpen()) { card.hidden = true; return; }
+  const items = helperItems().slice(0, 6);
+  card.innerHTML = `
+    <h3>💜 Things that helped you before</h3>
+    ${items.length
+      ? `<ul class="helper-list">${items.map(i => `<li>🌱 ${escapeHTML(i.label)}${i.n > 1 ? ` <small>×${i.n}</small>` : ''}</li>`).join('')}</ul>
+         <p class="tiny muted">From your own entries. Even one small step counts.</p>`
+      : `<p class="muted" style="font-size:14px">Nothing saved yet. On better days, fill in “What helped today?” — it will show up here when you need it.</p>`}
+    ${mood === 1 ? `<p class="tiny muted">If things feel really heavy, reach out to someone you trust. You don't have to carry it alone.</p>` : ''}`;
+  card.hidden = false;
+}
+/** Journal + what-helped block for saved-entry cards. */
+function entryExtras(e) {
+  let h = '';
+  if (e.helped) h += `<p class="helped-chip"><span aria-hidden="true">🌱</span><span><b>What helped:</b> ${escapeHTML(e.helped)}</span></p>`;
+  if (e.journal) {
+    const words = e.journal.split(/\s+/).filter(Boolean).length;
+    h += `<details class="journal-view"><summary>${icon('i-mic', 16)} Journal · ${words} word${words === 1 ? '' : 's'}</summary><p>${escapeHTML(e.journal)}</p></details>`;
+  }
+  return h;
+}
+/** Put an entry (or blanks) into the form fields. */
+function fillForm(e) {
+  $('#journal-input').value = e && e.journal || '';
+  $('#helped-input').value = e && e.helped || '';
+  $('#note-input').value = e && e.note || '';
+  noteTouched = !!(e && e.note && e.note !== summarize(e.journal));
+  updateCounter();
+}
+
 function greeting() {
   const h = new Date().getHours();
   if (h < 5) return 'Up late? Night owl mode 🌙';
@@ -1766,6 +2042,7 @@ function renderToday() {
   $('#back-today').hidden = isToday;
   $('#yesterday-btn').hidden = !isToday;
 
+  if (!open) Voice.stop();
   $('#entry-form').hidden = !open;
   $('#entry-card').hidden = open;
   $('#cancel-edit').hidden = !(entry && state.editing);
@@ -1783,6 +2060,7 @@ function renderToday() {
       <div class="entry-inner">
         <div class="entry-top"><span class="entry-emoji emoji" aria-hidden="true">${m.emoji}</span><div><p class="entry-label">Feeling ${m.label.toLowerCase()}</p><p class="entry-date">${fmtLong(d)}</p></div></div>
         <p class="entry-note">${entry.note ? '“' + escapeHTML(entry.note) + '”' : '<span class="muted">No note — just the vibe.</span>'}</p>
+        ${entryExtras(entry)}
         <div class="entry-actions">
           <button type="button" class="btn btn-primary grow" data-action="edit">${icon('i-edit')} Edit</button>
           <button type="button" class="icon-btn" data-action="delete" aria-label="Delete entry">${icon('i-trash', 20)}</button>
@@ -1791,6 +2069,7 @@ function renderToday() {
       </div>`;
   }
   updateMoodUI(displayedMood(), 0, true);
+  renderHelpers();
   renderPeek();
   renderStrip();
 }
@@ -1808,14 +2087,18 @@ function updateMoodUI(v, dir = 0, quiet = false) {
 }
 function setDraftMood(v, dir = 0) {
   if (!formOpen() || v === state.draftMood) return;
-  state.draftMood = v; buzz(8); updateMoodUI(v, dir);
+  state.draftMood = v; buzz(8); updateMoodUI(v, dir); renderHelpers();
 }
 const cycleMood = delta => setDraftMood(((state.draftMood - 1 + delta + 5) % 5) + 1, delta);
 
 function saveEntry() {
-  const note = $('#note-input').value.trim().slice(0, MAX_NOTE);
+  Voice.stop();
+  const journal = $('#journal-input').value.trim();
+  const helped = $('#helped-input').value.trim();
+  const note = ($('#note-input').value.trim() || summarize(journal)).slice(0, MAX_NOTE);
   const key = state.editKey, existed = !!Store.get(key);
-  Store.set(key, { mood: state.draftMood, note });
+  Store.set(key, { mood: state.draftMood, note, journal, helped });
+  fillForm(null);
   Pwa.persist();   // first save is a good moment to ask for durable storage
   const r = $('#save-btn').getBoundingClientRect();
   FX.burst(r.left + r.width / 2, r.top + r.height / 2, state.draftMood);
@@ -1828,15 +2111,16 @@ function startEdit(key = state.editKey) {
   const e = Store.get(key);
   state.editKey = key; state.editing = !!e;
   if (e) state.draftMood = e.mood;
-  $('#note-input').value = e ? e.note : '';
-  updateCounter();
+  Voice.stop();
+  fillForm(e);
   if (state.tab !== 'today') setTab('today');
   renderToday();
-  setTimeout(() => $('#note-input').focus({ preventScroll: true }), 80);
+  setTimeout(() => $('#journal-input').focus({ preventScroll: true }), 80);
 }
 function goToday() {
+  Voice.stop();
   state.editKey = todayKey(); state.editing = false;
-  const e = Store.get(state.editKey); $('#note-input').value = ''; updateCounter();
+  const e = Store.get(state.editKey); fillForm(null);
   if (e) state.draftMood = e.mood;
   renderToday();
 }
@@ -1844,6 +2128,9 @@ function updateCounter() {
   const n = $('#note-input').value.length, c = $('#note-counter');
   c.textContent = `${n}/${MAX_NOTE}`;
   c.classList.toggle('near', n >= 100 && n < MAX_NOTE); c.classList.toggle('full', n >= MAX_NOTE);
+  const j = $('#journal-input').value.length, jc = $('#journal-counter');
+  jc.textContent = `${j}/${MAX_JOURNAL}`;
+  jc.style.color = j >= MAX_JOURNAL ? '#EF476F' : j >= MAX_JOURNAL - 200 ? '#c99a1e' : '';
 }
 
 /* ---------- yesterday peek (pull-down) ---------- */
@@ -1855,6 +2142,7 @@ function renderPeek() {
       <div class="entry-inner">
         <div class="entry-top"><span class="entry-emoji emoji" style="font-size:36px;margin-top:-40px" aria-hidden="true">${MOODS[e.mood].emoji}</span><p class="entry-label">${MOODS[e.mood].label}</p></div>
         <p class="entry-note" style="font-size:16px">${e.note ? '“' + escapeHTML(e.note) + '”' : '<span class="muted">No note</span>'}</p>
+        ${entryExtras(e)}
         <div class="entry-actions"><button type="button" class="btn btn-line" data-action="edit-y">${icon('i-edit')} Edit</button><button type="button" class="icon-btn" data-action="delete-y" aria-label="Delete yesterday's entry">${icon('i-trash', 20)}</button></div>
       </div>
     </div>` : `
@@ -1882,9 +2170,10 @@ function renderStrip() {
       <span class="art" style="${artStyle(e.mood)}"><span class="emoji">${MOODS[e.mood].emoji}</span></span>
       <span class="meta"><span class="d">${fmtShort(d)}</span><span class="n">${escapeHTML(e.note || MOODS[e.mood].label)}</span></span></button>`;
   };
-  // duplicated once so the marquee loops seamlessly
-  const html = keys.map(k => item(k, false)).join('') + (state.reduced ? '' : keys.map(k => item(k, true)).join(''));
-  strip.innerHTML = `<div class="strip-track" style="--dur:${Math.max(20, keys.length * 5)}s">${html}</div>`;
+  // with enough days, duplicate once so the marquee loops seamlessly; a short list just sits still
+  const scroll = keys.length >= 4 && !state.reduced;
+  const html = keys.map(k => item(k, false)).join('') + (scroll ? keys.map(k => item(k, true)).join('') : '');
+  strip.innerHTML = `<div class="strip-track${scroll ? '' : ' still'}" style="--dur:${Math.max(20, keys.length * 5)}s">${html}</div>`;
 }
 
 /* =====================================================================
@@ -1941,6 +2230,7 @@ function renderDayCard() {
     card.innerHTML = `<div class="day-art art kb" style="${artStyle(e.mood)}"><span class="tag" style="position:absolute;right:14px;top:12px;z-index:1">${MOODS[e.mood].label}</span><span class="emoji" aria-hidden="true">${MOODS[e.mood].emoji}</span></div>
       <div class="day-body pad-top"><p class="day-date">${fmtLong(d)}</p>
       <p class="day-note">${e.note ? '“' + escapeHTML(e.note) + '”' : '<span class="muted">No note</span>'}</p>
+      ${entryExtras(e)}
       <div class="day-actions"><button type="button" class="btn btn-line" data-action="edit-day">${icon('i-edit')} Edit</button><button type="button" class="btn btn-line" data-action="delete-day">${icon('i-trash')} Delete</button></div>
       <p class="tiny muted">Long-press the tile or this card to delete.</p></div>`;
   } else {
@@ -2022,6 +2312,7 @@ function renderTrends({ animate = true } = {}) {
   renderChart(list, { animate });
   renderStats(s, { animate });
   renderDonut(s, { animate });
+  renderHelpsTop();
 }
 
 /* ---------- line / area chart (SVG, sized in real pixels) ---------- */
@@ -2155,6 +2446,15 @@ function renderDonut(s, { animate }) {
   }));
 }
 
+/* ---------- what helps you most (all entries, not just this month) ---------- */
+function renderHelpsTop() {
+  const items = helperItems().slice(0, 5), box = $('#helps-top');
+  const max = items.length ? items[0].score : 1;
+  box.innerHTML = `<div><h3 class="eyebrow" id="helps-title">🌱 What helps you most</h3><p class="tiny muted" style="margin-top:4px">From “What helped today?” across all your entries</p></div>` + (items.length
+    ? `<ul class="helps-rows">${items.map(i => `<li><span>${escapeHTML(i.label)}</span><span class="muted">${i.n} day${i.n === 1 ? '' : 's'}</span><span class="bar"><i style="width:${Math.max(8, i.score / max * 100)}%"></i></span></li>`).join('')}</ul>`
+    : `<p class="muted" style="font-size:14px">When you log a day, add what helped — a walk, music, a call with a friend. Your personal mood boosters will collect here.</p>`);
+}
+
 /* ---------- scroll reveals, parallax drift & pointer tilt ---------- */
 const revealIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealIO.unobserve(e.target); } }), { threshold: .12 }) : null;
 function observeReveals() { $$('.reveal:not(.in)').forEach(el => revealIO ? revealIO.observe(el) : el.classList.add('in')); }
@@ -2177,6 +2477,7 @@ function moveIndicator() {
   ind.style.transform = `translate(${b.offsetLeft}px, ${b.offsetTop}px)`;
 }
 function setTab(tab, { initial = false } = {}) {
+  if (tab !== 'today') Voice.stop();
   const prevIdx = TABS.indexOf(state.tab), nextIdx = TABS.indexOf(tab);
   const prevView = state.tab === 'today' ? 'today' : 'insights';
   state.tab = tab;
@@ -2406,9 +2707,19 @@ function bindUI() {
   };
   stage.addEventListener('pointerup', orbEnd); stage.addEventListener('pointercancel', orbEnd);
 
-  $('#note-input').addEventListener('input', updateCounter);
+  $('#note-input').addEventListener('input', e => {
+    // a manual edit wins; clearing the summary hands it back to auto-fill
+    if (e.isTrusted) noteTouched = !!e.target.value.trim();
+    updateCounter();
+  });
+  $('#journal-input').addEventListener('input', () => {
+    if (!noteTouched) $('#note-input').value = summarize($('#journal-input').value);
+    updateCounter();
+  });
+  $('#helped-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#note-input').focus(); } });
+  $$('#mic-journal, #mic-helped').forEach(b => b.addEventListener('click', () => Voice.toggle($('#' + b.dataset.target), b)));
   $('#entry-form').addEventListener('submit', e => { e.preventDefault(); saveEntry(); });
-  $('#cancel-edit').addEventListener('click', () => { state.editing = false; renderToday(); });
+  $('#cancel-edit').addEventListener('click', () => { Voice.stop(); state.editing = false; fillForm(null); renderToday(); });
   $('#back-today').addEventListener('click', goToday);
   $('#yesterday-btn').addEventListener('click', () => togglePeek());
 
